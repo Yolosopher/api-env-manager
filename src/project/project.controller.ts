@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   Post,
   Query,
@@ -40,7 +41,11 @@ export class ProjectController {
     @Param() { id }: ProjectIdDto,
   ) {
     const userId = req.user.id;
-    return this.projectService.getProjectById(userId, id);
+    const project = this.projectService.getProjectById(userId, id);
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+    return project;
   }
 
   @HttpCode(HttpStatus.CREATED)

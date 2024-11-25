@@ -77,7 +77,9 @@ describe('ProjectController', () => {
     });
 
     it('should throw NotFoundException if project not found', async () => {
-      mockProjectService.getProjectById.mockResolvedValue(null);
+      mockProjectService.getProjectById.mockRejectedValue(
+        new NotFoundException('Project not found'),
+      );
 
       const projectIdDto: ProjectIdDto = { id: 'nonExistentId' };
       await expect(
