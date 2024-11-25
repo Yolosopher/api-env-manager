@@ -10,8 +10,8 @@ import { AuthService } from './auth.service';
 import { AuthLoginDto } from './auth.validation';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GitHubAuthGuard } from './guards/github-auth.guard';
-import { DecodedToken } from './auth.interface';
 import { CreateUserDto } from 'src/user/user.validation';
+import { RequestWithUser } from 'types/global';
 
 @Controller('auth')
 export class AuthController {
@@ -49,7 +49,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  async getProfile(@Request() req: { user: DecodedToken }) {
+  async getProfile(@Request() req: RequestWithUser) {
     const user = await this.authService.getProfile(req.user.id);
     if (req.user.accessToken) {
       return {
