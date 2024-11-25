@@ -14,17 +14,17 @@ datasource db {
 }
 
 model User {
-  id         String     @id @default(auto()) @map("_id") @db.ObjectId
-  email      String     @unique
-  password   String?    // Optional for OAuth users
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  email      String    @unique
+  password   String? // Optional for OAuth users
   fullName   String?
-  provider   String?    // 'local', 'github', 'google', etc.
-  providerId String?    // ID from the OAuth provider
+  provider   String? // 'local', 'github', 'google', etc.
+  providerId String? // ID from the OAuth provider
   avatar     String?
-  deleted    Boolean    @default(false)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  projects   Project[]  @relation("UserProjects")
+  deleted    Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  projects   Project[] @relation("UserProjects")
 }
 
 model Project {
@@ -32,25 +32,25 @@ model Project {
   name         String
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-  user         User          @relation("UserProjects", fields: [userId], references: [id])
+  user         User          @relation("UserProjects", fields: [userId], references: [id], onDelete: Cascade)
   userId       String        @db.ObjectId
   environments Environment[] @relation("ProjectEnvironments")
 }
 
 model Environment {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  project       Project  @relation("ProjectEnvironments", fields: [projectId], references: [id])
-  projectId     String   @db.ObjectId
-  variables     EnvironmentVariable[] @relation("EnvironmentVariables")
+  id        String                @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+  project   Project               @relation("ProjectEnvironments", fields: [projectId], references: [id])
+  projectId String                @db.ObjectId
+  variables EnvironmentVariable[] @relation("EnvironmentVariables")
 }
 
 model EnvironmentVariable {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
   key           String
   value         String
   environment   Environment @relation("EnvironmentVariables", fields: [environmentId], references: [id])
-  environmentId String   @db.ObjectId
+  environmentId String      @db.ObjectId
 }
