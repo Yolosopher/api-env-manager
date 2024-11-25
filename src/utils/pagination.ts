@@ -1,6 +1,8 @@
-interface PaginationParams {
+export interface PaginationParams {
   page: number;
   pageSize: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }
 
 export function paginate<T>(data: T[], { page, pageSize }: PaginationParams) {
@@ -27,18 +29,22 @@ export async function paginatePrisma<T>(
       where: Record<string, unknown>;
       skip: number;
       take: number;
+      orderBy?: Record<string, 'asc' | 'desc'>;
     }) => Promise<T[]>;
   },
-  { page, pageSize }: PaginationParams,
+  { page, pageSize, sortBy, sortOrder }: PaginationParams,
   where: Record<string, unknown> = {},
 ) {
   const skip = (page - 1) * pageSize;
+  const orderBy = sortBy ? { [sortBy]: sortOrder || 'asc' } : undefined;
+
   const [totalItems, data] = await Promise.all([
     model.count({ where }),
     model.findMany({
       where,
       skip,
       take: pageSize,
+      orderBy,
     }),
   ]);
 

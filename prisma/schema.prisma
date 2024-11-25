@@ -38,19 +38,12 @@ model Project {
 }
 
 model Environment {
-  id        String                @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
-  createdAt DateTime              @default(now())
-  updatedAt DateTime              @updatedAt
-  project   Project               @relation("ProjectEnvironments", fields: [projectId], references: [id])
-  projectId String                @db.ObjectId
-  variables EnvironmentVariable[] @relation("EnvironmentVariables")
-}
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  project   Project  @relation("ProjectEnvironments", fields: [projectId], references: [id])
+  projectId String   @db.ObjectId
 
-model EnvironmentVariable {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  key           String
-  value         String
-  environment   Environment @relation("EnvironmentVariables", fields: [environmentId], references: [id])
-  environmentId String      @db.ObjectId
+  variables Json @default("{}")
 }

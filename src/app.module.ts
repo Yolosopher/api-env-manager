@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import * as Joi from 'joi';
 import { JwtModule } from '@nestjs/jwt';
+import { ProjectModule } from './project/project.module';
 
 const ConfigSchema = Joi.object({
   NODE_ENV: Joi.string()
@@ -39,6 +40,7 @@ const ConfigSchema = Joi.object({
     AuthModule,
     UserModule,
     PrismaModule,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

@@ -10,6 +10,7 @@ import { UserModule } from 'src/user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { GitHubStrategy } from './strategy/github.strategy';
 import { UserService } from 'src/user/user.service';
+import { RequestWithUser } from 'types/global';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -138,7 +139,9 @@ describe('AuthController', () => {
       };
       mockAuthService.getProfile.mockResolvedValue(userProfile);
 
-      const result = await controller.getProfile({ user: decodedToken });
+      const result = await controller.getProfile({
+        user: decodedToken,
+      } as RequestWithUser);
       expect(result).toEqual(userProfile);
       expect(mockAuthService.getProfile).toHaveBeenCalledWith(userId);
     });
