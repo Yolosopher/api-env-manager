@@ -1,14 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthLoginDto } from './auth.validation';
 import { CreateUserDto } from 'src/user/user.validation';
 import { DecodedToken } from './auth.interface';
-import { PrismaModule } from '../prisma/prisma.module';
 
 import { UserModule } from 'src/user/user.module';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './strategy/jwt.strategy';
 import { GitHubStrategy } from './strategy/github.strategy';
 import { UserService } from 'src/user/user.service';
 
@@ -22,6 +21,7 @@ describe('AuthController', () => {
     register: jest.fn(),
     getProfile: jest.fn(),
     validateOAuthUser: jest.fn(),
+    githubLogin: jest.fn(),
   };
 
   const mockUserService = {
@@ -117,7 +117,7 @@ describe('AuthController', () => {
       mockAuthService.login.mockReturnValue(token);
 
       const result = await controller.githubCallback({ user });
-      expect(result).toEqual({ ...user, token });
+      expect(result).toEqual({ token });
       expect(mockAuthService.login).toHaveBeenCalledWith(user);
     });
   });
@@ -129,6 +129,7 @@ describe('AuthController', () => {
         id: '1',
         email: 'test@example.com',
         fullName: 'Test User',
+        accessToken: 'token',
       };
       const decodedToken: DecodedToken = {
         id: userId,

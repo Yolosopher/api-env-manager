@@ -13,8 +13,11 @@ export class UserService {
 
   async findByEmail(
     email: string,
-    deleted: boolean = false,
+    deleted: boolean | 'skip' = false,
   ): Promise<User | null> {
+    if (deleted === 'skip') {
+      return this.prisma.user.findUnique({ where: { email } });
+    }
     return this.prisma.user.findUnique({ where: { email, deleted } });
   }
 
@@ -22,8 +25,12 @@ export class UserService {
     email,
     password,
   }: AuthLoginDto): Promise<User | null> {
-    const user = await this.findByEmail(email);
+    const user = await this.findByEmail(email, 'skip');
+
     if (user && (await bcrypt.compare(password, user.password))) {
+      if (user.deleted) {
+        return await this.updateUser(user.id, { deleted: false });
+      }
       return user;
     }
     return null;
@@ -45,7 +52,13 @@ export class UserService {
     return rest;
   }
 
-  async findById(id: string, deleted: boolean = false): Promise<User | null> {
+  async findById(
+    id: string,
+    deleted: boolean | 'skip' = false,
+  ): Promise<User | null> {
+    if (deleted === 'skip') {
+      return this.prisma.user.findUnique({ where: { id } });
+    }
     return this.prisma.user.findUnique({ where: { id, deleted } });
   }
 
@@ -63,7 +76,7 @@ export class UserService {
   async findAllUsers(
     page: number,
     pageSize: number,
-    deleted: boolean = false,
+    deleted: boolean | 'skip' = false,
   ): Promise<{
     data: User[];
     meta: {
@@ -73,7 +86,7 @@ export class UserService {
       pageSize: number;
     };
   }> {
-    const where = { deleted };
+    const where = deleted === 'skip' ? {} : { deleted };
     return await paginatePrisma<User>(
       this.prisma.user,
       { page, pageSize },

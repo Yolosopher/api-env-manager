@@ -3,8 +3,7 @@ export const mockPrismaService = {
     findUnique: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
-    delete: jest.fn(),
-    // Add other methods as needed
+    findMany: jest.fn(),
+    count: jest.fn(),
   },
-  // Mock other models as needed
 };
