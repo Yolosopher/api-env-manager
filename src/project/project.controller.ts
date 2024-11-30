@@ -30,6 +30,7 @@ export class ProjectController {
     @Query() paginationParams: PaginationParams,
   ) {
     const userId = req.user.id;
+
     return this.projectService.getProjects(userId, paginationParams);
   }
 

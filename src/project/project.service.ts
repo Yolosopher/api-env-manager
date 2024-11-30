@@ -1,13 +1,16 @@
 /**
- * ProjectService handles all operations related to projects, including
- * creating, retrieving, updating, and deleting projects. It also provides
- * pagination and sorting functionality for retrieving a list of projects
- * associated with a specific user.
+ * The ProjectService class manages operations related to projects, such as
+ * creating, retrieving, updating, and deleting projects. It also supports
+ * pagination and sorting for fetching a list of projects associated with a user.
  *
  * @module ProjectService
  */
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProjectDto, UpdateProjectNameDto } from './project.validation';
 import { paginatePrisma } from 'src/utils/pagination';
@@ -18,9 +21,9 @@ export class ProjectService {
   constructor(private prisma: PrismaService) {}
 
   /**
-   * Retrieves a paginated list of projects for a specific user.
+   * Fetches a paginated list of projects for a specific user.
    *
-   * @param userId - The ID of the user whose projects are to be retrieved.
+   * @param userId - The ID of the user whose projects are to be fetched.
    * @param paginationParams - An object containing pagination and sorting parameters.
    * @returns A promise that resolves to an object containing the paginated projects and metadata.
    */
@@ -31,16 +34,16 @@ export class ProjectService {
     const where = { userId };
     return paginatePrisma(
       this.prisma.project,
-      { page, pageSize, sortBy, sortOrder },
+      { page, pageSize, sortBy, sortOrder, populate: ['environments'] },
       where,
     );
   }
 
   /**
-   * Retrieves a specific project by its ID for a given user.
+   * Fetches a specific project by its ID for a given user.
    *
    * @param userId - The ID of the user requesting the project.
-   * @param id - The ID of the project to be retrieved.
+   * @param id - The ID of the project to be fetched.
    * @returns A promise that resolves to the project object if found, or null if not found.
    */
   async getProjectById(userId: string, id: string) {
@@ -52,9 +55,20 @@ export class ProjectService {
    *
    * @param data - The data for the new project, including the user ID.
    * @returns A promise that resolves to the created project object.
+   * @throws ConflictException if a project with the same name already exists for the user.
    */
   async createProject(data: CreateProjectDto) {
-    return this.prisma.project.create({ data });
+    const existingProject = await this.prisma.project.findFirst({
+      where: { userId: data.userId, name: data.name },
+    });
+
+    if (existingProject) {
+      throw new ConflictException('Project with this name already exists');
+    }
+
+    const newProject = await this.prisma.project.create({ data });
+
+    return newProject;
   }
 
   /**
@@ -71,12 +85,10 @@ export class ProjectService {
     });
 
     if (!project) {
-      throw new NotFoundException(
-        'Project not found or you do not have access to this project',
-      );
+      throw new NotFoundException('Project not found');
     }
 
-    // delete all environments connected to this project
+    // Delete all environments associated with this project
     await this.prisma.environment.deleteMany({
       where: {
         projectId: id,
@@ -104,46 +116,6 @@ export class ProjectService {
     return this.prisma.project.update({
       where: { id },
       data: updateProjectNameDto,
-    });
-  }
-
-  /**
-   * Adds an environment to a project.
-   *
-   * @param id - The ID of the project to which the environment will be added.
-   * @param environmentId - The ID of the environment to be connected.
-   * @returns A promise that resolves to the updated project object.
-   */
-  async pushEnvironmentToProject(id: string, environmentId: string) {
-    return this.prisma.project.update({
-      where: {
-        id,
-      },
-      data: {
-        environments: {
-          connect: { id: environmentId },
-        },
-      },
-    });
-  }
-
-  /**
-   * Removes an environment from a project.
-   *
-   * @param id - The ID of the project from which the environment will be removed.
-   * @param environmentId - The ID of the environment to be disconnected.
-   * @returns A promise that resolves to the updated project object.
-   */
-  async pullEnvironmentFromProject(id: string, environmentId: string) {
-    return this.prisma.project.update({
-      where: { id },
-      data: {
-        environments: {
-          disconnect: {
-            id: environmentId,
-          },
-        },
-      },
     });
   }
 }
