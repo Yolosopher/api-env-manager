@@ -1,11 +1,33 @@
-export interface PaginationParams {
-  page: number;
-  pageSize: number;
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
+
+export class PaginationParams {
+  @IsNumber()
+  @IsOptional()
+  @Min(1)
+  page: number = 1;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(1)
+  pageSize: number = 10;
+
+  @IsString()
+  @IsOptional()
   sortBy?: string;
+
+  @IsString()
+  @IsOptional()
   sortOrder?: 'asc' | 'desc';
+
+  @IsString({ each: true })
+  @IsOptional()
+  populate?: string[]; // Added populate parameter
 }
 
-export function paginate<T>(data: T[], { page, pageSize }: PaginationParams) {
+export function paginate<T>(
+  data: T[],
+  { page = 1, pageSize = 10 }: PaginationParams,
+) {
   const offset = (page - 1) * pageSize;
   const paginatedItems = data.slice(offset, offset + pageSize);
   const totalItems = data.length;
@@ -30,13 +52,17 @@ export async function paginatePrisma<T>(
       skip: number;
       take: number;
       orderBy?: Record<string, 'asc' | 'desc'>;
+      include?: Record<string, boolean>; // Added include parameter for population
     }) => Promise<T[]>;
   },
-  { page, pageSize, sortBy, sortOrder }: PaginationParams,
+  { page = 1, pageSize = 10, sortBy, sortOrder, populate }: PaginationParams,
   where: Record<string, unknown> = {},
 ) {
   const skip = (page - 1) * pageSize;
   const orderBy = sortBy ? { [sortBy]: sortOrder || 'asc' } : undefined;
+  const include = populate
+    ? Object.fromEntries(populate.map((field) => [field, true]))
+    : undefined;
 
   const [totalItems, data] = await Promise.all([
     model.count({ where }),
@@ -45,6 +71,7 @@ export async function paginatePrisma<T>(
       skip,
       take: pageSize,
       orderBy,
+      include,
     }),
   ]);
 
@@ -60,22 +87,3 @@ export async function paginatePrisma<T>(
     },
   };
 }
-
-// You can use the `paginatePrisma` function in other services to handle pagination for any Prisma model.
-// Here's an example of how to use it in a service:
-
-// import { paginatePrisma } from 'src/utils/pagination';
-// import { PrismaService } from 'src/prisma/prisma.service';
-
-// @Injectable()
-// export class SomeService {
-//   constructor(private prisma: PrismaService) {}
-
-//   async getPaginatedItems(page: number, pageSize: number) {
-//     const where = { deleted: false }; // Example filter condition
-//     return paginatePrisma(this.prisma.someModel, { page, pageSize }, where);
-//   }
-// }
-
-// In this example, replace `someModel` with the actual Prisma model you want to paginate.
-// The `where` object can be customized to include any filter conditions you need.

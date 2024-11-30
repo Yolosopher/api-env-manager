@@ -35,6 +35,8 @@ model Project {
   user         User          @relation("UserProjects", fields: [userId], references: [id], onDelete: Cascade)
   userId       String        @db.ObjectId
   environments Environment[] @relation("ProjectEnvironments")
+
+  @@unique([userId, name])
 }
 
 model Environment {
@@ -46,4 +48,6 @@ model Environment {
   projectId String   @db.ObjectId
 
   variables Json @default("{}")
+
+  @@unique([projectId, name])
 }

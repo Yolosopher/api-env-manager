@@ -8,7 +8,7 @@ import { CreateProjectDto, ProjectIdDto } from './project.validation';
 import { RequestWithUser } from 'types/global';
 import { NotFoundException } from '@nestjs/common';
 
-describe('ProjectController', () => {
+describe('ProjectController - Enhanced Spec', () => {
   let controller: ProjectController;
   let service: ProjectService;
 
@@ -51,9 +51,11 @@ describe('ProjectController', () => {
       mockProjectService.getProjects.mockResolvedValue(result);
 
       const paginationParams: PaginationParams = { page: 1, pageSize: 10 };
-      expect(await controller.getProjects(mockRequest, paginationParams)).toBe(
-        result,
+      const projects = await controller.getProjects(
+        mockRequest,
+        paginationParams,
       );
+      expect(projects).toBe(result);
       expect(service.getProjects).toHaveBeenCalledWith(
         'userId',
         paginationParams,
@@ -67,9 +69,11 @@ describe('ProjectController', () => {
       mockProjectService.getProjectById.mockResolvedValue(result);
 
       const projectIdDto: ProjectIdDto = { id: 'projectId' };
-      expect(await controller.getProjectById(mockRequest, projectIdDto)).toBe(
-        result,
+      const project = await controller.getProjectById(
+        mockRequest,
+        projectIdDto,
       );
+      expect(project).toBe(result);
       expect(service.getProjectById).toHaveBeenCalledWith(
         'userId',
         'projectId',
@@ -97,9 +101,10 @@ describe('ProjectController', () => {
       const result = { id: 'newProjectId', ...createProjectDto };
       mockProjectService.createProject.mockResolvedValue(result);
 
-      expect(
-        await controller.createProject(mockRequest, { name: 'New Project' }),
-      ).toBe(result);
+      const newProject = await controller.createProject(mockRequest, {
+        name: 'New Project',
+      });
+      expect(newProject).toBe(result);
       expect(service.createProject).toHaveBeenCalledWith({
         name: 'New Project',
         userId: 'userId',
@@ -113,9 +118,11 @@ describe('ProjectController', () => {
       const result = { message: 'Project deleted successfully' };
       mockProjectService.deleteProject.mockResolvedValue(result);
 
-      expect(await controller.deleteProject(mockRequest, projectIdDto)).toBe(
-        result,
+      const deleteResult = await controller.deleteProject(
+        mockRequest,
+        projectIdDto,
       );
+      expect(deleteResult).toBe(result);
       expect(service.deleteProject).toHaveBeenCalledWith('userId', 'projectId');
     });
   });
