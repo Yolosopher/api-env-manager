@@ -7,5 +7,6 @@ import { ApiTokenController } from './api-token.controller';
   imports: [PrismaModule],
   providers: [ApiTokenService],
   controllers: [ApiTokenController],
+  exports: [ApiTokenService],
 })
 export class ApiTokenModule {}
