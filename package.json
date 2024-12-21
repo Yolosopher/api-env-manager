@@ -21,7 +21,8 @@
     "test:app": "jest src/app.controller.spec.ts",
     "test:auth": "jest src/auth/auth.controller.spec.ts",
     "test:project": "jest src/project/project.controller.spec.ts",
-    "test:environment": "jest src/environment/environment.controller.spec.ts"
+    "test:environment": "jest src/environment/environment.controller.spec.ts",
+    "test:api-token": "jest src/api-token/api-token.controller.spec.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
