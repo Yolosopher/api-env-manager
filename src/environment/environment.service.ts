@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateEnvironmentDto } from './environment.dto';
+import { CreateEnvironmentDto } from './environment.validation';
 
 @Injectable()
 export class EnvironmentService {

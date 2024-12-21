@@ -13,7 +13,7 @@ import {
 import { EnvironmentService } from './environment.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestWithUser } from 'types/global';
-import { CreateEnvironmentDto } from './environment.dto';
+import { CreateEnvironmentDto } from './environment.validation';
 
 @Controller('environment')
 export class EnvironmentController {
