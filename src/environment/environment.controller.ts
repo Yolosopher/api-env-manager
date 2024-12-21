@@ -25,8 +25,7 @@ export class EnvironmentController {
     @Req() req: RequestWithUser,
     @Param('id') environmentId: string,
   ) {
-    const userId = req.user.id;
-    // Optionally, verify that the user has access to the environment
+    const userId = req.user.id; // to verify that the user has access to the environment
     return this.environmentService.getEnvironmentById(userId, environmentId);
   }
 
@@ -36,8 +35,7 @@ export class EnvironmentController {
     @Req() req: RequestWithUser,
     @Param('projectId') projectId: string,
   ) {
-    const userId = req.user.id;
-    // Optionally, verify that the user has access to the project
+    const userId = req.user.id; // to verify that the user has access to the project
     return this.environmentService.getEnvironmentsByProjectId(
       userId,
       projectId,
@@ -67,8 +65,7 @@ export class EnvironmentController {
     @Req() req: RequestWithUser,
     @Param('id') environmentId: string,
   ) {
-    const userId = req.user.id;
-    // Optionally, verify that the user has access to the environment
+    const userId = req.user.id; // to verify that the user has access to the environment
     return this.environmentService.deleteEnvironment(userId, environmentId);
   }
 }
