@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EnvironmentController } from './environment.controller';
 import { EnvironmentService } from './environment.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { CreateEnvironmentDto } from './environment.dto';
+import { CreateEnvironmentDto } from './environment.validation';
 import { RequestWithUser } from 'types/global';
 import {
   NotFoundException,

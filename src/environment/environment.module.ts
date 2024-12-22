@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common';
 import { EnvironmentService } from './environment.service';
-import { EnvironmentController } from './environment.controller';
+import {
+  ApiEnvironmentController,
+  EnvironmentController,
+} from './environment.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { ApiTokenModule } from 'src/api-token/api-token.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, ApiTokenModule],
   providers: [EnvironmentService],
-  controllers: [EnvironmentController],
+  controllers: [EnvironmentController, ApiEnvironmentController],
 })
 export class EnvironmentModule {}
