@@ -12,7 +12,6 @@ export class ApiTokenGuard implements CanActivate {
   constructor(private readonly apiTokenService: ApiTokenService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    console.log('ApiTokenGuard');
     const request = context.switchToHttp().getRequest();
     const apiToken = this.extractTokenFromHeader(request);
 
