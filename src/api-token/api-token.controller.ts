@@ -32,7 +32,8 @@ export class ApiTokenController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async getApiTokens(@Req() req: RequestWithUser) {
-    return this.apiTokenService.getApiTokens(req.user.id);
+    const userId = req.user.id;
+    return this.apiTokenService.getApiTokens(userId);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateApiTokenDto } from './api-token.validation';
 import { randomBytes } from 'crypto';
@@ -13,6 +17,7 @@ export class ApiTokenService {
    * @param userId - The ID of the user to create the token for
    * @param createApiTokenDto - DTO containing optional name for the token
    * @returns A promise that resolves to the created API token object with id, token value, name and creation date
+   * @throws ConflictException if a token with the same name already exists
    */
   async createApiToken(
     userId: string,
@@ -23,6 +28,20 @@ export class ApiTokenService {
     name: string;
     createdAt: Date;
   }> {
+    // Check if token with same name already exists
+    const existingToken = await this.prisma.apiToken.findFirst({
+      where: {
+        name: createApiTokenDto.name,
+        userId: userId,
+      },
+    });
+
+    if (existingToken) {
+      throw new ConflictException(
+        `API token with name '${createApiTokenDto.name}' already exists`,
+      );
+    }
+
     const apiToken = randomBytes(32).toString('hex');
 
     return this.prisma.apiToken.create({

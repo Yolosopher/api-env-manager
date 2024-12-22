@@ -14,13 +14,13 @@ import { EnvironmentService } from './environment.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestWithUser } from 'types/global';
 import { CreateEnvironmentDto } from './environment.validation';
+import { ApiTokenGuard } from 'src/auth/guards/api-token.guard';
 
-@Controller('environment')
-export class EnvironmentController {
-  constructor(private readonly environmentService: EnvironmentService) {}
+// Base class with shared functionality
+export abstract class BaseEnvironmentController {
+  constructor(protected readonly environmentService: EnvironmentService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Get('environment/:id')
+  @Get('single/:id')
   async getEnvironmentById(
     @Req() req: RequestWithUser,
     @Param('id') environmentId: string,
@@ -29,7 +29,6 @@ export class EnvironmentController {
     return this.environmentService.getEnvironmentById(userId, environmentId);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':projectId')
   async getEnvironmentsByProjectId(
     @Req() req: RequestWithUser,
@@ -42,7 +41,6 @@ export class EnvironmentController {
     );
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createEnvironment(
@@ -58,7 +56,6 @@ export class EnvironmentController {
     });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteEnvironment(
@@ -67,5 +64,21 @@ export class EnvironmentController {
   ) {
     const userId = req.user.id; // to verify that the user has access to the environment
     return this.environmentService.deleteEnvironment(userId, environmentId);
+  }
+}
+
+@UseGuards(JwtAuthGuard)
+@Controller('environment')
+export class EnvironmentController extends BaseEnvironmentController {
+  constructor(environmentService: EnvironmentService) {
+    super(environmentService);
+  }
+}
+
+@UseGuards(ApiTokenGuard)
+@Controller('api/environment')
+export class ApiEnvironmentController extends BaseEnvironmentController {
+  constructor(environmentService: EnvironmentService) {
+    super(environmentService);
   }
 }

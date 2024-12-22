@@ -1,7 +1,11 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty } from 'class-validator';
 
 export class CreateApiTokenDto {
-  @IsString()
-  @IsOptional()
-  name?: string;
+  @IsString({
+    message: 'Name must be a string',
+  })
+  @IsNotEmpty({
+    message: 'Name must not be empty',
+  })
+  name: string;
 }

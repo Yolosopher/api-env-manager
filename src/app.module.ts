@@ -10,6 +10,7 @@ import * as Joi from 'joi';
 import { JwtModule } from '@nestjs/jwt';
 import { ProjectModule } from './project/project.module';
 import { EnvironmentModule } from './environment/environment.module';
+import { ApiTokenModule } from './api-token/api-token.module';
 
 const ConfigSchema = Joi.object({
   NODE_ENV: Joi.string()
@@ -43,6 +44,7 @@ const ConfigSchema = Joi.object({
     PrismaModule,
     ProjectModule,
     EnvironmentModule,
+    ApiTokenModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
