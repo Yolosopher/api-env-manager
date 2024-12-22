@@ -77,7 +77,7 @@ describe('ApiTokenService', () => {
         name: 'default',
       });
 
-      const result = await service.createApiToken(userId, {});
+      const result = await service.createApiToken(userId, { name: 'default' });
 
       expect(result.name).toBe('default');
       expect(prismaService.apiToken.create).toHaveBeenCalledWith(

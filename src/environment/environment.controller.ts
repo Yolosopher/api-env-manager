@@ -14,7 +14,7 @@ import { EnvironmentService } from './environment.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestWithUser } from 'types/global';
 import { CreateEnvironmentDto } from './environment.validation';
-import { ApiTokenGuard } from 'src/auth/guards/api-token.guard';
+import { ApiTokenGuard } from 'src/api-token/guards/api-token.guard';
 
 // Base class with shared functionality
 export abstract class BaseEnvironmentController {

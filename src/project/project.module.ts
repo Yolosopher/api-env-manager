@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ProjectService } from './project.service';
-import { ProjectController } from './project.controller';
+import { ApiProjectController, ProjectController } from './project.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { UserModule } from 'src/user/user.module';
-import { AuthModule } from 'src/auth/auth.module';
+import { ApiTokenModule } from 'src/api-token/api-token.module';
 
 @Module({
-  imports: [PrismaModule, UserModule, AuthModule],
+  imports: [PrismaModule, ApiTokenModule],
   providers: [ProjectService],
-  controllers: [ProjectController],
+  controllers: [ProjectController, ApiProjectController],
 })
 export class ProjectModule {}

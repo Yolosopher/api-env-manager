@@ -12,6 +12,7 @@ export class ApiTokenGuard implements CanActivate {
   constructor(private readonly apiTokenService: ApiTokenService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    console.log('ApiTokenGuard');
     const request = context.switchToHttp().getRequest();
     const apiToken = this.extractTokenFromHeader(request);
 
@@ -30,14 +31,8 @@ export class ApiTokenGuard implements CanActivate {
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
-    const authHeader =
-      request.headers['x-api-token'] || request.headers['authorization'];
+    const authHeader = request.headers['x-api-token'];
     if (!authHeader) return undefined;
-
-    // Check if it's a Bearer token
-    if (authHeader.startsWith('Bearer ')) {
-      return authHeader.substring(7);
-    }
 
     // Otherwise return the token as is
     return authHeader;

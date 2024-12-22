@@ -17,25 +17,21 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { PaginationParams } from 'src/utils/pagination';
 import { RequestWithUser } from 'types/global';
 import { CreateProjectDto, ProjectIdDto } from './project.validation';
+import { ApiTokenGuard } from 'src/api-token/guards/api-token.guard';
 
-@Controller('project')
-export class ProjectController {
-  constructor(private projectService: ProjectService) {}
+// Base class with shared functionality
+export abstract class BaseProjectController {
+  constructor(protected readonly projectService: ProjectService) {}
 
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
   @Get()
   async getProjects(
     @Req() req: RequestWithUser,
     @Query() paginationParams: PaginationParams,
   ) {
     const userId = req.user.id;
-
     return this.projectService.getProjects(userId, paginationParams);
   }
 
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getProjectById(
     @Req() req: RequestWithUser,
@@ -49,9 +45,8 @@ export class ProjectController {
     return project;
   }
 
-  @HttpCode(HttpStatus.CREATED)
-  @UseGuards(JwtAuthGuard)
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async createProject(
     @Req() req: RequestWithUser,
     @Body() createProjectDto: Pick<CreateProjectDto, 'name'>,
@@ -63,14 +58,29 @@ export class ProjectController {
     });
   }
 
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteProject(
     @Req() req: RequestWithUser,
     @Param() { id }: ProjectIdDto,
   ) {
     const userId = req.user.id;
     return this.projectService.deleteProject(userId, id);
+  }
+}
+
+@UseGuards(JwtAuthGuard)
+@Controller('project')
+export class ProjectController extends BaseProjectController {
+  constructor(projectService: ProjectService) {
+    super(projectService);
+  }
+}
+
+@UseGuards(ApiTokenGuard)
+@Controller('api/project')
+export class ApiProjectController extends BaseProjectController {
+  constructor(projectService: ProjectService) {
+    super(projectService);
   }
 }
