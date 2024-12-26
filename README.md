@@ -38,7 +38,7 @@ NODE_ENV=development
 PORT=3000
 DATABASE_URL=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
-JWT_EXPIRES_IN=86400
+JWT_EXPIRES_IN="30d"
 
 # GitHub OAuth
 GITHUB_CLIENT_ID=your_github_client_id
