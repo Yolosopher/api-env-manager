@@ -67,6 +67,19 @@ export abstract class BaseProjectController {
     const userId = req.user.id;
     return this.projectService.deleteProject(userId, id);
   }
+
+  @Get('name/:name')
+  async getProjectByName(
+    @Req() req: RequestWithUser,
+    @Param('name') name: string,
+  ) {
+    const userId = req.user.id;
+    const project = await this.projectService.getProjectByName(userId, name);
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+    return project;
+  }
 }
 
 @UseGuards(JwtAuthGuard)
@@ -78,7 +91,7 @@ export class ProjectController extends BaseProjectController {
 }
 
 @UseGuards(ApiTokenGuard)
-@Controller('api/project')
+@Controller('cli/project')
 export class ApiProjectController extends BaseProjectController {
   constructor(projectService: ProjectService) {
     super(projectService);

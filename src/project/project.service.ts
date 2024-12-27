@@ -118,4 +118,17 @@ export class ProjectService {
       data: updateProjectNameDto,
     });
   }
+
+  /**
+   * Fetches a project by its name for a specific user.
+   *
+   * @param userId - The ID of the user requesting the project.
+   * @param name - The name of the project to be fetched.
+   * @returns A promise that resolves to the project object if found, or null if not found.
+   */
+  async getProjectByName(userId: string, name: string) {
+    return this.prisma.project.findFirst({
+      where: { userId, name },
+    });
+  }
 }

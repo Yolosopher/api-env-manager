@@ -76,7 +76,7 @@ export class EnvironmentController extends BaseEnvironmentController {
 }
 
 @UseGuards(ApiTokenGuard)
-@Controller('api/environment')
+@Controller('cli/environment')
 export class ApiEnvironmentController extends BaseEnvironmentController {
   constructor(environmentService: EnvironmentService) {
     super(environmentService);
