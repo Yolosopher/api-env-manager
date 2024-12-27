@@ -15,7 +15,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateApiTokenDto } from './api-token.validation';
 import { RequestWithUser } from 'types/global';
 
-@Controller('api-tokens')
+@Controller('api-token')
 export class ApiTokenController {
   constructor(private readonly apiTokenService: ApiTokenService) {}
 
