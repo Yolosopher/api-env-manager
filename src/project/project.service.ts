@@ -103,6 +103,37 @@ export class ProjectService {
   }
 
   /**
+   * Deletes a project by its name for a given user.
+   *
+   * @param userId - The ID of the user requesting the deletion.
+   * @param name - The name of the project to be deleted.
+   * @returns A promise that resolves to a message indicating the deletion was successful.
+   * @throws NotFoundException if the project does not exist or the user does not have access.
+   */
+  async deleteProjectByName(userId: string, name: string) {
+    const project = await this.prisma.project.findFirst({
+      where: { userId, name },
+    });
+
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+
+    // Delete all environments associated with this project
+    await this.prisma.environment.deleteMany({
+      where: {
+        projectId: project.id,
+      },
+    });
+
+    await this.prisma.project.delete({
+      where: { id: project.id },
+    });
+
+    return { message: 'Project deleted successfully' };
+  }
+
+  /**
    * Updates the name of a project.
    *
    * @param id - The ID of the project to be updated.
