@@ -48,6 +48,7 @@
     "test:environment": "jest src/environment/environment.controller.spec.ts",
     "test:api-token": "jest src/api-token/api-token.controller.spec.ts",
     "dev-prisma-ready": "dotenv -e .development.env -- npx prisma db push",
+    "prod-prisma-ready": "dotenv -e .env -- npx prisma db push"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
