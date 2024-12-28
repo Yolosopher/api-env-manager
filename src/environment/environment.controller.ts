@@ -13,7 +13,10 @@ import {
 import { EnvironmentService } from './environment.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestWithUser } from 'types/global';
-import { CreateEnvironmentDto } from './environment.validation';
+import {
+  CreateEnvironmentDto,
+  CreateEnvironmentByProjectNameDto,
+} from './environment.validation';
 import { ApiTokenGuard } from 'src/api-token/guards/api-token.guard';
 
 // Base class with shared functionality
@@ -28,7 +31,14 @@ export abstract class BaseEnvironmentController {
     const userId = req.user.id; // to verify that the user has access to the environment
     return this.environmentService.getEnvironmentById(userId, environmentId);
   }
+}
 
+@UseGuards(JwtAuthGuard)
+@Controller('environment')
+export class EnvironmentController extends BaseEnvironmentController {
+  constructor(environmentService: EnvironmentService) {
+    super(environmentService);
+  }
   @Get(':projectId')
   async getEnvironmentsByProjectId(
     @Req() req: RequestWithUser,
@@ -67,18 +77,49 @@ export abstract class BaseEnvironmentController {
   }
 }
 
-@UseGuards(JwtAuthGuard)
-@Controller('environment')
-export class EnvironmentController extends BaseEnvironmentController {
-  constructor(environmentService: EnvironmentService) {
-    super(environmentService);
-  }
-}
-
 @UseGuards(ApiTokenGuard)
-@Controller('api/environment')
+@Controller('cli/environment')
 export class ApiEnvironmentController extends BaseEnvironmentController {
   constructor(environmentService: EnvironmentService) {
     super(environmentService);
+  }
+  @Get(':projectName')
+  async getEnvironmentsByProjectName(
+    @Req() req: RequestWithUser,
+    @Param('projectName') projectName: string,
+  ) {
+    const userId = req.user.id; // to verify that the user has access to the project
+    return this.environmentService.getEnvironmentsByProjectName(
+      userId,
+      projectName,
+    );
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async createEnvironmentByProjectName(
+    @Req() req: RequestWithUser,
+    @Body() { projectName, name, variables }: CreateEnvironmentByProjectNameDto,
+  ) {
+    const userId = req.user.id;
+    return this.environmentService.createEnvironmentByProjectName(
+      userId,
+      projectName,
+      name,
+      variables,
+    );
+  }
+
+  @Delete(':name')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteEnvironmentByName(
+    @Req() req: RequestWithUser,
+    @Param('name') environmentName: string,
+  ) {
+    const userId = req.user.id; // to verify that the user has access to the environment
+    return this.environmentService.deleteEnvironmentByName(
+      userId,
+      environmentName,
+    );
   }
 }

@@ -32,6 +32,26 @@ export abstract class BaseProjectController {
     return this.projectService.getProjects(userId, paginationParams);
   }
 
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async createProject(
+    @Req() req: RequestWithUser,
+    @Body() createProjectDto: Pick<CreateProjectDto, 'name'>,
+  ) {
+    const userId = req.user.id;
+    return this.projectService.createProject({
+      ...createProjectDto,
+      userId,
+    });
+  }
+}
+
+@UseGuards(JwtAuthGuard)
+@Controller('project')
+export class ProjectController extends BaseProjectController {
+  constructor(projectService: ProjectService) {
+    super(projectService);
+  }
   @Get(':id')
   async getProjectById(
     @Req() req: RequestWithUser,
@@ -45,19 +65,6 @@ export abstract class BaseProjectController {
     return project;
   }
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  async createProject(
-    @Req() req: RequestWithUser,
-    @Body() createProjectDto: Pick<CreateProjectDto, 'name'>,
-  ) {
-    const userId = req.user.id;
-    return this.projectService.createProject({
-      ...createProjectDto,
-      userId,
-    });
-  }
-
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteProject(
@@ -69,18 +76,32 @@ export abstract class BaseProjectController {
   }
 }
 
-@UseGuards(JwtAuthGuard)
-@Controller('project')
-export class ProjectController extends BaseProjectController {
-  constructor(projectService: ProjectService) {
-    super(projectService);
-  }
-}
-
 @UseGuards(ApiTokenGuard)
-@Controller('api/project')
+@Controller('cli/project')
 export class ApiProjectController extends BaseProjectController {
   constructor(projectService: ProjectService) {
     super(projectService);
+  }
+  @Get(':name')
+  async getProjectByName(
+    @Req() req: RequestWithUser,
+    @Param('name') name: string,
+  ) {
+    const userId = req.user.id;
+    const project = await this.projectService.getProjectByName(userId, name);
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+    return project;
+  }
+
+  @Delete(':name')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteProjectByName(
+    @Req() req: RequestWithUser,
+    @Param('name') name: string,
+  ) {
+    const userId = req.user.id;
+    return this.projectService.deleteProjectByName(userId, name);
   }
 }

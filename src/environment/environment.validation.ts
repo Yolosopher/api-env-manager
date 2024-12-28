@@ -13,3 +13,16 @@ export class CreateEnvironmentDto {
   @IsObject()
   variables: Record<string, string>;
 }
+
+export class CreateEnvironmentByProjectNameDto {
+  @IsString()
+  projectName: string;
+
+  @IsString()
+  @Transform(({ value }) => value.trim().toLowerCase().replaceAll(' ', '_'))
+  @MinLength(1)
+  name: string;
+
+  @IsObject()
+  variables: Record<string, string>;
+}
