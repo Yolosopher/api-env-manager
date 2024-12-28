@@ -16,7 +16,11 @@ import { ProjectService } from './project.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { PaginationParams } from 'src/utils/pagination';
 import { RequestWithUser } from 'src/types/global';
-import { CreateProjectDto, ProjectIdDto } from './project.validation';
+import {
+  CreateProjectDto,
+  ProjectIdDto,
+  ProjectNameDto,
+} from './project.validation';
 import { ApiTokenGuard } from 'src/api-token/guards/api-token.guard';
 
 // Base class with shared functionality
@@ -85,7 +89,7 @@ export class ApiProjectController extends BaseProjectController {
   @Get(':name')
   async getProjectByName(
     @Req() req: RequestWithUser,
-    @Param('name') name: string,
+    @Param() { name }: ProjectNameDto,
   ) {
     const userId = req.user.id;
     const project = await this.projectService.getProjectByName(userId, name);
@@ -99,7 +103,7 @@ export class ApiProjectController extends BaseProjectController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteProjectByName(
     @Req() req: RequestWithUser,
-    @Param('name') name: string,
+    @Param() { name }: ProjectNameDto,
   ) {
     const userId = req.user.id;
     return this.projectService.deleteProjectByName(userId, name);

@@ -16,6 +16,10 @@ import { RequestWithUser } from 'src/types/global';
 import {
   CreateEnvironmentDto,
   CreateEnvironmentByProjectNameDto,
+  GetByEnvironmentIdDto,
+  GetApiTokenByProjectIdDto,
+  GetByProjectNameDto,
+  GetEnvironmentByNameDto,
 } from './environment.validation';
 import { ApiTokenGuard } from 'src/api-token/guards/api-token.guard';
 
@@ -23,10 +27,10 @@ import { ApiTokenGuard } from 'src/api-token/guards/api-token.guard';
 export abstract class BaseEnvironmentController {
   constructor(protected readonly environmentService: EnvironmentService) {}
 
-  @Get('single/:id')
+  @Get('single/:environmentId')
   async getEnvironmentById(
     @Req() req: RequestWithUser,
-    @Param('id') environmentId: string,
+    @Param() { environmentId }: GetByEnvironmentIdDto,
   ) {
     const userId = req.user.id; // to verify that the user has access to the environment
     return this.environmentService.getEnvironmentById(userId, environmentId);
@@ -42,7 +46,7 @@ export class EnvironmentController extends BaseEnvironmentController {
   @Get(':projectId')
   async getEnvironmentsByProjectId(
     @Req() req: RequestWithUser,
-    @Param('projectId') projectId: string,
+    @Param() { projectId }: GetApiTokenByProjectIdDto,
   ) {
     const userId = req.user.id; // to verify that the user has access to the project
     return this.environmentService.getEnvironmentsByProjectId(
@@ -66,11 +70,11 @@ export class EnvironmentController extends BaseEnvironmentController {
     });
   }
 
-  @Delete(':id')
+  @Delete(':environmentId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteEnvironment(
     @Req() req: RequestWithUser,
-    @Param('id') environmentId: string,
+    @Param() { environmentId }: GetByEnvironmentIdDto,
   ) {
     const userId = req.user.id; // to verify that the user has access to the environment
     return this.environmentService.deleteEnvironment(userId, environmentId);
@@ -86,7 +90,7 @@ export class ApiEnvironmentController extends BaseEnvironmentController {
   @Get(':projectName')
   async getEnvironmentsByProjectName(
     @Req() req: RequestWithUser,
-    @Param('projectName') projectName: string,
+    @Param() { projectName }: GetByProjectNameDto,
   ) {
     const userId = req.user.id; // to verify that the user has access to the project
     return this.environmentService.getEnvironmentsByProjectName(
@@ -114,8 +118,7 @@ export class ApiEnvironmentController extends BaseEnvironmentController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteEnvironmentByName(
     @Req() req: RequestWithUser,
-    @Param('projectName') projectName: string,
-    @Param('environmentName') environmentName: string,
+    @Param() { projectName, environmentName }: GetEnvironmentByNameDto,
   ) {
     const userId = req.user.id; // to verify that the user has access to the environment
     return this.environmentService.deleteEnvironmentByName(

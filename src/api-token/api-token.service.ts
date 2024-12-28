@@ -12,6 +12,18 @@ export class ApiTokenService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
+   * Generates a cryptographically secure random API token.
+   *
+   * @returns A promise that resolves to a base64-encoded 256-bit (32-byte) random string
+   * that can be used as an API token
+   */
+  private generateUniqueApiToken(): string {
+    // Generate a random 256-bit (32-byte) string
+    const buffer = randomBytes(32);
+    return buffer.toString('base64');
+  }
+
+  /**
    * Creates a new API token for a user.
    *
    * @param userId - The ID of the user to create the token for
@@ -42,7 +54,9 @@ export class ApiTokenService {
       );
     }
 
-    const apiToken = randomBytes(32).toString('hex');
+    console.log('userId', userId);
+    console.log('createApiTokenDto', createApiTokenDto);
+    const apiToken = this.generateUniqueApiToken();
 
     return this.prisma.apiToken.create({
       data: {
