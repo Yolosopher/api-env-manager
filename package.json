@@ -29,10 +29,6 @@
     "oauth",
     "jwt"
   ],
-  "engines": {
-    "node": ">=14.0.0",
-    "npm": ">=6.0.0"
-  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
