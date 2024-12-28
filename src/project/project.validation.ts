@@ -22,3 +22,9 @@ export class ProjectIdDto {
   @IsMongoId()
   id: string;
 }
+export class ProjectNameDto {
+  @IsString({
+    message: 'Project name is required and must be a string',
+  })
+  name: string;
+}

@@ -46,15 +46,17 @@
     "test:auth": "jest src/auth/auth.controller.spec.ts",
     "test:project": "jest src/project/project.controller.spec.ts",
     "test:environment": "jest src/environment/environment.controller.spec.ts",
-    "test:api-token": "jest src/api-token/api-token.controller.spec.ts"
+    "test:api-token": "jest src/api-token/api-token.controller.spec.ts",
+    "dev-prisma-ready": "dotenv -e .development.env -- npx prisma db push",
+    "prod-prisma-ready": "dotenv -e .env -- npx prisma db push"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^10.2.0",
-    "@nestjs/passport": "^10.0.3",
     "@nestjs/mapped-types": "*",
+    "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.0",
     "@prisma/client": "^6.1.0",
     "bcrypt": "^5.1.1",
