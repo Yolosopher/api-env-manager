@@ -13,7 +13,7 @@ import {
 import { ApiTokenService } from './api-token.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateApiTokenDto } from './api-token.validation';
-import { RequestWithUser } from 'types/global';
+import { RequestWithUser } from 'src/types/global';
 
 @Controller('api-token')
 export class ApiTokenController {

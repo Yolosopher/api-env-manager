@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { EnvironmentService } from './environment.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RequestWithUser } from 'types/global';
+import { RequestWithUser } from 'src/types/global';
 import {
   CreateEnvironmentDto,
   CreateEnvironmentByProjectNameDto,
