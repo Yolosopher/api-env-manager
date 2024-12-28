@@ -229,23 +229,34 @@ export class EnvironmentService {
    * Deletes an environment by its name.
    *
    * @param userId - The ID of the user attempting to delete the environment
+   * @param projectName - The name of the project to delete the environment from
    * @param environmentName - The name of the environment to be deleted
    * @returns A promise that resolves to the deleted environment object
    * @throws NotFoundException if the environment does not exist
    * @throws ForbiddenException if the user does not have access to the project associated with the environment
    */
-  async deleteEnvironmentByName(userId: string, environmentName: string) {
+  async deleteEnvironmentByName(
+    userId: string,
+    projectName: string,
+    environmentName: string,
+  ) {
+    const project = await this.prisma.project.findFirst({
+      where: { name: projectName, userId },
+    });
+
+    if (!project) {
+      throw new NotFoundException(
+        'Project not found or you do not have access to it',
+      );
+    }
+
     const environment = await this.prisma.environment.findFirst({
-      where: { name: environmentName },
+      where: { name: environmentName, projectId: project.id },
       include: { project: true },
     });
 
     if (!environment) {
       throw new NotFoundException('Environment not found');
-    }
-
-    if (environment.project.userId !== userId) {
-      throw new ForbiddenException('You do not have access to this project');
     }
 
     return this.prisma.environment.delete({

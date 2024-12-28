@@ -110,15 +110,17 @@ export class ApiEnvironmentController extends BaseEnvironmentController {
     );
   }
 
-  @Delete(':name')
+  @Delete(':projectName/:environmentName')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteEnvironmentByName(
     @Req() req: RequestWithUser,
-    @Param('name') environmentName: string,
+    @Param('projectName') projectName: string,
+    @Param('environmentName') environmentName: string,
   ) {
     const userId = req.user.id; // to verify that the user has access to the environment
     return this.environmentService.deleteEnvironmentByName(
       userId,
+      projectName,
       environmentName,
     );
   }
