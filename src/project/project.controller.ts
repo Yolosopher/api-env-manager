@@ -15,7 +15,7 @@ import {
 import { ProjectService } from './project.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { PaginationParams } from 'src/utils/pagination';
-import { RequestWithUser } from 'types/global';
+import { RequestWithUser } from 'src/types/global';
 import { CreateProjectDto, ProjectIdDto } from './project.validation';
 import { ApiTokenGuard } from 'src/api-token/guards/api-token.guard';
 

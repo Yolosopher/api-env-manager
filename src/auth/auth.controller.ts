@@ -11,7 +11,7 @@ import { AuthLoginDto } from './auth.validation';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GitHubAuthGuard } from './guards/github-auth.guard';
 import { CreateUserDto } from 'src/user/user.validation';
-import { RequestWithUser } from 'types/global';
+import { RequestWithUser } from 'src/types/global';
 
 @Controller('auth')
 export class AuthController {
