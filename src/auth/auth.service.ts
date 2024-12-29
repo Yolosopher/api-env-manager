@@ -11,6 +11,7 @@ import { CreateUserDto } from 'src/user/user.validation';
 
 @Injectable()
 export class AuthService {
+  private redirectUrl = process.env.GITHUB_CALLBACK_FRONTEND_REDIRECT as string;
   constructor(
     private jwtService: JwtService,
     private userService: UserService,
@@ -28,6 +29,10 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email };
     const accessToken = this.jwtService.sign(payload);
     return { accessToken };
+  }
+
+  redirectToFrontend(token: string) {
+    return `${this.redirectUrl}?token=${token}`;
   }
 
   async register(createUserDto: CreateUserDto): Promise<IUser> {
