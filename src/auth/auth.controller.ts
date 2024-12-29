@@ -1,17 +1,18 @@
 import {
+  Body,
   Controller,
+  Get,
   Post,
+  Redirect,
   Request,
   UseGuards,
-  Get,
-  Body,
 } from '@nestjs/common';
+import { RequestWithUser } from 'src/types/global';
+import { CreateUserDto } from 'src/user/user.validation';
 import { AuthService } from './auth.service';
 import { AuthLoginDto } from './auth.validation';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GitHubAuthGuard } from './guards/github-auth.guard';
-import { CreateUserDto } from 'src/user/user.validation';
-import { RequestWithUser } from 'src/types/global';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -36,9 +37,11 @@ export class AuthController {
 
   @Get('github/callback')
   @UseGuards(GitHubAuthGuard)
+  @Redirect(process.env.GITHUB_CALLBACK_FRONTEND_REDIRECT, 302)
   async githubCallback(@Request() req) {
-    const token = await this.authService.login(req.user);
-    return { token };
+    const { accessToken } = this.authService.login(req.user);
+    const redirectUrl = this.authService.redirectToFrontend(accessToken);
+    return { url: redirectUrl };
   }
 
   @Get('github')
